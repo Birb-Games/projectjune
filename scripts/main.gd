@@ -1,3 +1,5 @@
+class_name Main
+
 extends Node2D
 
 @onready var neighborhood: Node2D = $Neighborhood
@@ -22,6 +24,11 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	update_hud()
+
+func advance_day():
+	neighborhood.update_neighbors()
+	current_day += 1
+	$HUD/Control/TransitionRect.start_animation()
 
 func load_lawn(lawn_template: PackedScene) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
@@ -66,11 +73,7 @@ func update_hud_lawn():
 	$HUD.update_health_bar($Player.get_hp_perc())
 
 func update_hud_neighborhood():
-	if $Player.can_talk_to_neighbor:
-		$HUD.update_info_text("Press [SPACE] to knock on door.")
-	else:
-		$HUD.update_info_text("")
-	
+	$HUD.update_info_text($Player.interact_text)	
 	# hide info text if talking to a neighbor
 	$HUD/Control/InfoText.visible = !$HUD/Control/NeighborMenu.visible
 	
